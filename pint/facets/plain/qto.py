@@ -40,17 +40,7 @@ def ito_reduced_units(quantity: PlainQuantity) -> None:
     dimension. This will not reduce compound units (e.g., 'J/kg' will not
     be reduced to m**2/s**2), nor can it make use of contexts at this time.
     """
-
-    # shortcuts in case we're dimensionless or only a single unit
-    if quantity.dimensionless:
-        return quantity.ito({})
-    if len(quantity._units) == 1:
-        return None
-
-    units = quantity._units.copy()
-    new_units = _get_reduced_units(quantity, units)
-
-    return quantity.ito(new_units)
+    pass
 
 
 def to_reduced_units(
@@ -60,17 +50,7 @@ def to_reduced_units(
     dimension. This will not reduce compound units (intentionally), nor
     can it make use of contexts at this time.
     """
-
-    # shortcuts in case we're dimensionless or only a single unit
-    if quantity.dimensionless:
-        return quantity.to({})
-    if len(quantity._units) == 1:
-        return quantity
-
-    units = quantity._units.copy()
-    new_units = _get_reduced_units(quantity, units)
-
-    return quantity.to(new_units)
+    pass
 
 
 def to_compact(
@@ -91,76 +71,7 @@ def to_compact(
     >>> (1e-2 * ureg("kg m/s^2")).to_compact("N")
     Quantity(10.0, "millinewton")
     """
-
-    if not isinstance(quantity.magnitude, numbers.Number) and not hasattr(
-        quantity.magnitude, "nominal_value"
-    ):
-        warnings.warn(
-            "to_compact applied to non numerical types has an undefined behavior.",
-            UndefinedBehavior,
-            stacklevel=2,
-        )
-        return quantity
-
-    qm = (
-        quantity.magnitude
-        if not hasattr(quantity.magnitude, "nominal_value")
-        else quantity.magnitude.nominal_value
-    )
-    if quantity.unitless or qm == 0 or math.isnan(qm) or math.isinf(qm):
-        return quantity
-
-    SI_prefixes: dict[int, str] = {}
-    for prefix in quantity._REGISTRY._prefixes.values():
-        try:
-            scale = prefix.converter.scale
-            # Kludgy way to check if this is an SI prefix
-            log10_scale = int(math.log10(scale))
-            if log10_scale == math.log10(scale):
-                SI_prefixes[log10_scale] = prefix.name
-        except Exception:
-            SI_prefixes[0] = ""
-
-    SI_prefixes_list = sorted(SI_prefixes.items())
-    SI_powers = [item[0] for item in SI_prefixes_list]
-    SI_bases = [item[1] for item in SI_prefixes_list]
-
-    if unit is None:
-        unit = infer_base_unit(quantity, registry=quantity._REGISTRY)
-    else:
-        unit = infer_base_unit(quantity.__class__(1, unit), registry=quantity._REGISTRY)
-
-    q_base = quantity.to(unit)
-
-    magnitude = q_base.magnitude
-    # Support uncertainties
-    if hasattr(magnitude, "nominal_value"):
-        magnitude = magnitude.nominal_value
-
-    units = list(q_base._units.items())
-    units_numerator = [a for a in units if a[1] > 0]
-
-    if len(units_numerator) > 0:
-        unit_str, unit_power = units_numerator[0]
-    else:
-        unit_str, unit_power = units[0]
-
-    if unit_power > 0:
-        power = math.floor(math.log10(abs(magnitude)) / float(unit_power) / 3) * 3
-    else:
-        power = math.ceil(math.log10(abs(magnitude)) / float(unit_power) / 3) * 3
-
-    index = bisect.bisect_left(SI_powers, power)
-
-    if index >= len(SI_bases):
-        index = -1
-
-    prefix_str = SI_bases[index]
-
-    new_unit_str = prefix_str + unit_str
-    new_unit_container = q_base._units.rename(unit_str, new_unit_str)
-
-    return quantity.to(new_unit_container)
+    pass
 
 
 def _get_unprefixed(quantity: PlainQuantity) -> PlainQuantity:
@@ -211,9 +122,7 @@ def to_preferred(
     >>> (1 * (ureg.force_pound * ureg.m)).to_preferred([ureg.W])
     Quantity(4.4482216152605005, "watt * second")
     """
-
-    units = _get_preferred(quantity, preferred_units)
-    return quantity.to(units)
+    pass
 
 
 def ito_preferred(
@@ -231,9 +140,7 @@ def ito_preferred(
     >>> (1 * (ureg.force_pound * ureg.m)).to_preferred([ureg.W])
     Quantity(4.4482216152605005, "watt * second")
     """
-
-    units = _get_preferred(quantity, preferred_units)
-    return quantity.ito(units)
+    pass
 
 
 def _get_preferred(

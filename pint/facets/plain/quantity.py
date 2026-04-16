@@ -283,12 +283,12 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
     @property
     def magnitude(self) -> MagnitudeT:
         """PlainQuantity's magnitude. Long form for `m`"""
-        return self._magnitude
+        pass
 
     @property
     def m(self) -> MagnitudeT:
         """PlainQuantity's magnitude. Short form for `magnitude`"""
-        return self._magnitude
+        pass
 
     def m_as(self, units) -> MagnitudeT:
         """PlainQuantity's magnitude expressed in particular units.
@@ -307,17 +307,17 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
     @property
     def units(self) -> Unit:
         """PlainQuantity's units. Long form for `u`"""
-        return self._REGISTRY.Unit(self._units)
+        pass
 
     @property
     def u(self) -> Unit:
         """PlainQuantity's units. Short form for `units`"""
-        return self._REGISTRY.Unit(self._units)
+        pass
 
     @property
     def unitless(self) -> bool:
         """ """
-        return not bool(self.to_root_units()._units)
+        pass
 
     def unit_items(self) -> Iterable[tuple[str, Scalar]]:
         """A view of the unit items."""
@@ -326,9 +326,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
     @property
     def dimensionless(self) -> bool:
         """ """
-        tmp = self.to_root_units()
-
-        return not bool(tmp.dimensionality)
+        pass
 
     _dimensionality: UnitsContainerT | None = None
 
@@ -340,14 +338,11 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
         dict
             Dimensionality of the PlainQuantity, e.g. ``{length: 1, time: -1}``
         """
-        if self._dimensionality is None:
-            self._dimensionality = self._REGISTRY._get_dimensionality(self._units)
-
-        return self._dimensionality
+        pass
 
     def check(self, dimension: UnitLike) -> bool:
         """Return true if the quantity's dimension matches passed dimension."""
-        return self.dimensionality == self._REGISTRY.get_dimensionality(dimension)
+        pass
 
     @classmethod
     def from_list(
@@ -371,7 +366,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
         -------
         pint.PlainQuantity
         """
-        return cls.from_sequence(quant_list, units=units)
+        pass
 
     @classmethod
     def from_sequence(
@@ -394,21 +389,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
         -------
         pint.PlainQuantity
         """
-
-        len_seq = len(seq)
-        if units is None:
-            if len_seq:
-                units = seq[0].u
-            else:
-                raise ValueError("Cannot determine units from empty sequence!")
-
-        a = np.empty(len_seq)
-
-        for i, seq_i in enumerate(seq):
-            a[i] = seq_i.m_as(units)
-            # raises DimensionalityError if incompatible units are used in the sequence
-
-        return cls(a, units)
+        pass
 
     @classmethod
     def from_tuple(cls, tup):
@@ -498,13 +479,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
         **ctx_kwargs :
             Values for the Context/s
         """
-
-        other = to_units_container(other, self._REGISTRY)
-
-        self._magnitude = self._convert_magnitude(other, *contexts, **ctx_kwargs)
-        self._units = other
-
-        return None
+        pass
 
     def to(
         self, other: QuantityOrUnitLike | None = None, *contexts, **ctx_kwargs
@@ -532,13 +507,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
 
     def ito_root_units(self) -> None:
         """Return PlainQuantity rescaled to root units."""
-
-        _, other = self._REGISTRY._get_root_units(self._units)
-
-        self._magnitude = self._convert_magnitude(other)
-        self._units = other
-
-        return None
+        pass
 
     def to_root_units(self) -> PlainQuantity[MagnitudeT]:
         """Return PlainQuantity rescaled to root units."""
@@ -551,13 +520,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
 
     def ito_base_units(self) -> None:
         """Return PlainQuantity rescaled to plain units."""
-
-        _, other = self._REGISTRY._get_base_units(self._units)
-
-        self._magnitude = self._convert_magnitude(other)
-        self._units = other
-
-        return None
+        pass
 
     def to_base_units(self) -> PlainQuantity[MagnitudeT]:
         """Return PlainQuantity rescaled to plain units."""
@@ -607,106 +570,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
             operator function (e.g. operator.add, operator.isub)
 
         """
-        if not self._check(other):
-            # other not from same Registry or not a PlainQuantity
-            try:
-                other_magnitude = _to_magnitude(
-                    other, self.force_ndarray, self.force_ndarray_like
-                )
-            except PintTypeError:
-                raise
-            except TypeError:
-                return NotImplemented
-            if zero_or_nan(other, True):
-                # If the other value is 0 (but not PlainQuantity 0)
-                # do the operation without checking units.
-                # We do the calculation instead of just returning the same
-                # value to enforce any shape checking and type casting due to
-                # the operation.
-                self._magnitude = op(self._magnitude, other_magnitude)
-            elif self.dimensionless:
-                self.ito(self.UnitsContainer())
-                self._magnitude = op(self._magnitude, other_magnitude)
-            else:
-                raise DimensionalityError(self._units, "dimensionless")
-            return self
-
-        if not self.dimensionality == other.dimensionality:
-            raise DimensionalityError(
-                self._units, other._units, self.dimensionality, other.dimensionality
-            )
-
-        # Next we define some variables to make if-clauses more readable.
-        self_non_mul_units = self._get_non_multiplicative_units()
-        is_self_multiplicative = len(self_non_mul_units) == 0
-        if len(self_non_mul_units) == 1:
-            self_non_mul_unit = self_non_mul_units[0]
-        other_non_mul_units = other._get_non_multiplicative_units()
-        is_other_multiplicative = len(other_non_mul_units) == 0
-        if len(other_non_mul_units) == 1:
-            other_non_mul_unit = other_non_mul_units[0]
-
-        # Presence of non-multiplicative units gives rise to several cases.
-        if is_self_multiplicative and is_other_multiplicative:
-            if self._units == other._units:
-                self._magnitude = op(self._magnitude, other._magnitude)
-            # If only self has a delta unit, other determines unit of result.
-            elif self._get_delta_units() and not other._get_delta_units():
-                self._magnitude = op(
-                    self._convert_magnitude(other._units), other._magnitude
-                )
-                self._units = other._units
-            else:
-                self._magnitude = op(self._magnitude, other.to(self._units)._magnitude)
-
-        elif (
-            op == operator.isub
-            and len(self_non_mul_units) == 1
-            and self._units[self_non_mul_unit] == 1
-            and not other._has_compatible_delta(self_non_mul_unit)
-        ):
-            if self._units == other._units:
-                self._magnitude = op(self._magnitude, other._magnitude)
-            else:
-                self._magnitude = op(self._magnitude, other.to(self._units)._magnitude)
-            self._units = self._units.rename(
-                self_non_mul_unit, "delta_" + self_non_mul_unit
-            )
-
-        elif (
-            op == operator.isub
-            and len(other_non_mul_units) == 1
-            and other._units[other_non_mul_unit] == 1
-            and not self._has_compatible_delta(other_non_mul_unit)
-        ):
-            # we convert to self directly since it is multiplicative
-            self._magnitude = op(self._magnitude, other.to(self._units)._magnitude)
-
-        elif (
-            len(self_non_mul_units) == 1
-            # order of the dimension of offset unit == 1 ?
-            and self._units[self_non_mul_unit] == 1
-            and other._has_compatible_delta(self_non_mul_unit)
-        ):
-            # Replace offset unit in self by the corresponding delta unit.
-            # This is done to prevent a shift by offset in the to()-call.
-            tu = self._units.rename(self_non_mul_unit, "delta_" + self_non_mul_unit)
-            self._magnitude = op(self._magnitude, other.to(tu)._magnitude)
-        elif (
-            len(other_non_mul_units) == 1
-            # order of the dimension of offset unit == 1 ?
-            and other._units[other_non_mul_unit] == 1
-            and self._has_compatible_delta(other_non_mul_unit)
-        ):
-            # Replace offset unit in other by the corresponding delta unit.
-            # This is done to prevent a shift by offset in the to()-call.
-            tu = other._units.rename(other_non_mul_unit, "delta_" + other_non_mul_unit)
-            self._magnitude = op(self._convert_magnitude(tu), other._magnitude)
-            self._units = other._units
-        else:
-            raise OffsetUnitCalculusError(self._units, other._units)
-
-        return self
+        pass
 
     @check_implemented
     def _add_sub(self, other, op):
@@ -719,130 +583,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
         op : function
             operator function (e.g. operator.add, operator.isub)
         """
-        if not self._check(other):
-            # other not from same Registry or not a PlainQuantity
-            if zero_or_nan(other, True):
-                # If the other value is 0 or NaN (but not a PlainQuantity)
-                # do the operation without checking units.
-                # We do the calculation instead of just returning the same
-                # value to enforce any shape checking and type casting due to
-                # the operation.
-                units = self._units
-                magnitude = op(
-                    self._magnitude,
-                    _to_magnitude(other, self.force_ndarray, self.force_ndarray_like),
-                )
-            elif self.dimensionless:
-                units = self.UnitsContainer()
-                magnitude = op(
-                    self.to(units)._magnitude,
-                    _to_magnitude(other, self.force_ndarray, self.force_ndarray_like),
-                )
-            else:
-                raise DimensionalityError(self._units, "dimensionless")
-            return self.__class__(magnitude, units)
-
-        # Special case for logarithmic units: dB can be added to dBm, dBW, etc.
-        # Get non-multiplicative units before checking dimensionality
-        self_non_mul_units = self._get_non_multiplicative_units()
-        other_non_mul_units = other._get_non_multiplicative_units()
-
-        # Next we define some variables to make if-clauses more readable.
-        # We already have self_non_mul_units and other_non_mul_units from our logarithmic check
-        is_self_multiplicative = len(self_non_mul_units) == 0
-        is_other_multiplicative = len(other_non_mul_units) == 0
-
-        if len(self_non_mul_units) == 1:
-            self_non_mul_unit = self_non_mul_units[0]
-        if len(other_non_mul_units) == 1:
-            other_non_mul_unit = other_non_mul_units[0]
-
-        # Check if we're dealing with logarithmic units that can be added (dB + dBm, etc.)
-        if self._is_logarithmic and other._is_logarithmic:
-            self_base = self.to_base_units()
-            other_base = other.to_base_units()
-            if op == operator.add:
-                result = self_base * other_base
-            elif op == operator.sub:
-                result = self_base / other_base
-
-            if self_base.dimensionless and other_base.dimensionless:
-                return result.to(self._units)
-            elif self_base.dimensionless:
-                return result.to(other._units)
-            elif other_base.dimensionless:
-                return result.to(self._units)
-            else:
-                return result
-
-        if not self.dimensionality == other.dimensionality:
-            raise DimensionalityError(
-                self._units, other._units, self.dimensionality, other.dimensionality
-            )
-
-        # Presence of non-multiplicative units gives rise to several cases.
-        if is_self_multiplicative and is_other_multiplicative:
-            if self._units == other._units:
-                magnitude = op(self._magnitude, other._magnitude)
-                units = self._units
-            # If only self has a delta unit, other determines unit of result.
-            elif self._get_delta_units() and not other._get_delta_units():
-                magnitude = op(
-                    self._convert_magnitude_not_inplace(other._units), other._magnitude
-                )
-                units = other._units
-            else:
-                units = self._units
-                magnitude = op(self._magnitude, other.to(self._units).magnitude)
-
-        elif (
-            op == operator.sub
-            and len(self_non_mul_units) == 1
-            and self._units[self_non_mul_unit] == 1
-            and not other._has_compatible_delta(self_non_mul_unit)
-        ):
-            if self._units == other._units:
-                magnitude = op(self._magnitude, other._magnitude)
-            else:
-                magnitude = op(self._magnitude, other.to(self._units)._magnitude)
-            units = self._units.rename(self_non_mul_unit, "delta_" + self_non_mul_unit)
-
-        elif (
-            op == operator.sub
-            and len(other_non_mul_units) == 1
-            and other._units[other_non_mul_unit] == 1
-            and not self._has_compatible_delta(other_non_mul_unit)
-        ):
-            # we convert to self directly since it is multiplicative
-            magnitude = op(self._magnitude, other.to(self._units)._magnitude)
-            units = self._units
-
-        elif (
-            len(self_non_mul_units) == 1
-            # order of the dimension of offset unit == 1 ?
-            and self._units[self_non_mul_unit] == 1
-            and other._has_compatible_delta(self_non_mul_unit)
-        ):
-            # Replace offset unit in self by the corresponding delta unit.
-            # This is done to prevent a shift by offset in the to()-call.
-            tu = self._units.rename(self_non_mul_unit, "delta_" + self_non_mul_unit)
-            magnitude = op(self._magnitude, other.to(tu).magnitude)
-            units = self._units
-        elif (
-            len(other_non_mul_units) == 1
-            # order of the dimension of offset unit == 1 ?
-            and other._units[other_non_mul_unit] == 1
-            and self._has_compatible_delta(other_non_mul_unit)
-        ):
-            # Replace offset unit in other by the corresponding delta unit.
-            # This is done to prevent a shift by offset in the to()-call.
-            tu = other._units.rename(other_non_mul_unit, "delta_" + other_non_mul_unit)
-            magnitude = op(self._convert_magnitude_not_inplace(tu), other._magnitude)
-            units = other._units
-        else:
-            raise OffsetUnitCalculusError(self._units, other._units)
-
-        return self.__class__(magnitude, units)
+        pass
 
     @overload
     def __iadd__(self, other: datetime.datetime) -> datetime.timedelta:  # type: ignore[misc]
@@ -903,54 +644,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
         -------
 
         """
-        if units_op is None:
-            units_op = magnitude_op
-
-        offset_units_self = self._get_non_multiplicative_units()
-        no_offset_units_self = len(offset_units_self)
-
-        if not self._check(other):
-            if not self._ok_for_muldiv(no_offset_units_self):
-                raise OffsetUnitCalculusError(self._units, getattr(other, "units", ""))
-            if len(offset_units_self) == 1:
-                if self._units[offset_units_self[0]] != 1 or magnitude_op not in (
-                    operator.mul,
-                    operator.imul,
-                ):
-                    raise OffsetUnitCalculusError(
-                        self._units, getattr(other, "units", "")
-                    )
-            try:
-                other_magnitude = _to_magnitude(
-                    other, self.force_ndarray, self.force_ndarray_like
-                )
-            except PintTypeError:
-                raise
-            except TypeError:
-                return NotImplemented
-            self._magnitude = magnitude_op(self._magnitude, other_magnitude)
-            self._units = units_op(self._units, self.UnitsContainer())
-            return self
-
-        if isinstance(other, self._REGISTRY.Unit):
-            other = 1 * other
-
-        if not self._ok_for_muldiv(no_offset_units_self):
-            raise OffsetUnitCalculusError(self._units, other._units)
-        elif no_offset_units_self == len(self._units) == 1:
-            self.ito_root_units()
-
-        no_offset_units_other = len(other._get_non_multiplicative_units())
-
-        if not other._ok_for_muldiv(no_offset_units_other):
-            raise OffsetUnitCalculusError(self._units, other._units)
-        elif no_offset_units_other == len(other._units) == 1:
-            other.ito_root_units()
-
-        self._magnitude = magnitude_op(self._magnitude, other._magnitude)
-        self._units = units_op(self._units, other._units)
-
-        return self
+        pass
 
     @check_implemented
     @ireduce_dimensions
@@ -972,58 +666,7 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
         -------
 
         """
-        if units_op is None:
-            units_op = magnitude_op
-
-        offset_units_self = self._get_non_multiplicative_units()
-        no_offset_units_self = len(offset_units_self)
-
-        if not self._check(other):
-            if not self._ok_for_muldiv(no_offset_units_self):
-                raise OffsetUnitCalculusError(self._units, getattr(other, "units", ""))
-            if len(offset_units_self) == 1:
-                if self._units[offset_units_self[0]] != 1 or magnitude_op not in (
-                    operator.mul,
-                    operator.imul,
-                ):
-                    raise OffsetUnitCalculusError(
-                        self._units, getattr(other, "units", "")
-                    )
-            try:
-                other_magnitude = _to_magnitude(
-                    other, self.force_ndarray, self.force_ndarray_like
-                )
-            except PintTypeError:
-                raise
-            except TypeError:
-                return NotImplemented
-
-            magnitude = magnitude_op(self._magnitude, other_magnitude)
-            units = units_op(self._units, self.UnitsContainer())
-
-            return self.__class__(magnitude, units)
-
-        if isinstance(other, self._REGISTRY.Unit):
-            other = 1 * other
-
-        new_self = self
-
-        if not self._ok_for_muldiv(no_offset_units_self):
-            raise OffsetUnitCalculusError(self._units, other._units)
-        elif no_offset_units_self == len(self._units) == 1:
-            new_self = self.to_root_units()
-
-        no_offset_units_other = len(other._get_non_multiplicative_units())
-
-        if not other._ok_for_muldiv(no_offset_units_other):
-            raise OffsetUnitCalculusError(self._units, other._units)
-        elif no_offset_units_other == len(other._units) == 1:
-            other = other.to_root_units()
-
-        magnitude = magnitude_op(new_self._magnitude, other._magnitude)
-        units = units_op(new_self._units, other._units)
-
-        return self.__class__(magnitude, units)
+        pass
 
     def __imul__(self, other):
         if is_duck_array_type(type(self._magnitude)):
@@ -1477,15 +1120,15 @@ class PlainQuantity(Generic[MagnitudeT], PrettyIPython, SharedRegistryObject):
     @property
     def _is_logarithmic(self) -> bool:
         """Check if the PlainQuantity object has logarithmic units."""
-        return False
+        pass
 
     def _get_delta_units(self) -> list[str]:
         """Return list of delta units ot the PlainQuantity object."""
-        return [u for u in self._units if u.startswith("delta_")]
+        pass
 
     def _has_compatible_delta(self, unit: str) -> bool:
         """ "Check if PlainQuantity object has a delta_unit that is compatible with unit"""
-        return False
+        pass
 
     def _ok_for_muldiv(self, no_offset_units=None) -> bool:
         return True

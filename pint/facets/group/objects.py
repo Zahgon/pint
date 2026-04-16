@@ -90,15 +90,7 @@ class Group(SharedRegistryObject):
         Calculated to include to all units in all included _used_groups.
 
         """
-        if self._computed_members is None:
-            tmp = set(self._unit_names)
-
-            for _, group in self.iter_used_groups():
-                tmp |= group.members
-
-            self._computed_members = frozenset(tmp)
-
-        return self._computed_members
+        pass
 
     def invalidate_members(self) -> None:
         """Invalidate computed members in this Group and all parent nodes."""
@@ -135,10 +127,7 @@ class Group(SharedRegistryObject):
 
     def remove_units(self, *unit_names: str) -> None:
         """Remove units from group."""
-        for unit_name in unit_names:
-            self._unit_names.remove(unit_name)
-
-        self.invalidate_members()
+        pass
 
     def add_groups(self, *group_names: str) -> None:
         """Add groups to group."""
@@ -159,14 +148,7 @@ class Group(SharedRegistryObject):
 
     def remove_groups(self, *group_names: str) -> None:
         """Remove groups from group."""
-        d = self._REGISTRY._groups
-        for group_name in group_names:
-            grp = d[group_name]
-
-            self._used_groups.remove(group_name)
-            grp._used_by.remove(self.name)
-
-        self.invalidate_members()
+        pass
 
     @classmethod
     def from_lines(
@@ -186,12 +168,7 @@ class Group(SharedRegistryObject):
         -------
 
         """
-        group_definition = GroupDefinition.from_lines(lines, non_int_type)
-
-        if group_definition is None:
-            raise ValueError(f"Could not define group from {lines}")
-
-        return cls.from_definition(group_definition, define_func)
+        pass
 
     @classmethod
     def from_definition(

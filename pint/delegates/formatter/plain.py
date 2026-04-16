@@ -126,19 +126,7 @@ class DefaultFormatter(BaseFormatter):
         """Format a quantity (magnitude and unit) into string
         given a string formatting specification and locale related arguments.
         """
-
-        registry = self._registry
-
-        mspec, uspec = split_format(
-            qspec, registry.formatter.default_format, registry.separate_format_defaults
-        )
-
-        joint_fstring = "{} {}"
-        return join_mu(
-            joint_fstring,
-            self.format_magnitude(quantity.magnitude, mspec, **babel_kwds),
-            self.format_unit(quantity.unit_items(), uspec, sort_func, **babel_kwds),
-        )
+        pass
 
     def format_uncertainty(
         self,
@@ -150,8 +138,7 @@ class DefaultFormatter(BaseFormatter):
         """Format an uncertainty magnitude (nominal value and stdev) into string
         given a string formatting specification and locale related arguments.
         """
-
-        return format(uncertainty, unc_spec).replace("+/-", " +/- ")
+        pass
 
     def format_measurement(
         self,
@@ -163,26 +150,7 @@ class DefaultFormatter(BaseFormatter):
         """Format an measurement (uncertainty and units) into string
         given a string formatting specification and locale related arguments.
         """
-
-        registry = self._registry
-
-        mspec, uspec = split_format(
-            meas_spec,
-            registry.formatter.default_format,
-            registry.separate_format_defaults,
-        )
-
-        unc_spec = remove_custom_flags(meas_spec)
-
-        joint_fstring = "{} {}"
-
-        return join_unc(
-            joint_fstring,
-            "(",
-            ")",
-            self.format_uncertainty(measurement.magnitude, unc_spec, **babel_kwds),
-            self.format_unit(measurement.units, uspec, sort_func, **babel_kwds),
-        )
+        pass
 
 
 class CompactFormatter(BaseFormatter):

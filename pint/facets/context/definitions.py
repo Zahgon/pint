@@ -44,16 +44,14 @@ class Relation:
     @property
     def variables(self) -> set[str]:
         """Find all variables names in the equation."""
-        return set(self._varname_re.findall(self.equation))
+        pass
 
     @property
     def transformation(self) -> Callable[..., Quantity]:
         """Return a transformation callable that uses the registry
         to parse the transformation equation.
         """
-        return lambda ureg, value, **kwargs: ureg.parse_expression(
-            self.equation, value=value, **kwargs
-        )
+        pass
 
     @property
     def bidirectional(self) -> bool:
@@ -101,7 +99,7 @@ class ContextDefinition(errors.WithDefErr):
     @property
     def variables(self) -> set[str]:
         """Return all variable names in all transformations."""
-        return set().union(*(r.variables for r in self.relations))
+        pass
 
     @classmethod
     def from_lines(cls, lines: Iterable[str], non_int_type: type):

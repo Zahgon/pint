@@ -170,12 +170,7 @@ class GenericSystemRegistry(
             multiplicative factor, plain units
 
         """
-
-        input_units = to_units_container(input_units)
-
-        f, units = self._get_base_units(input_units, check_nonmult, system)
-
-        return f, self.Unit(units)
+        pass
 
     def _get_base_units(
         self,
@@ -226,17 +221,7 @@ class GenericSystemRegistry(
         self, input_units: UnitsContainerT, group_or_system: str | None = None
     ) -> frozenset[Unit]:
         """ """
-
-        group_or_system = group_or_system or self._default_system_name
-
-        if group_or_system is None:
-            return super().get_compatible_units(input_units)
-
-        input_units = to_units_container(input_units)
-
-        equiv = self._get_compatible_units(input_units, group_or_system)
-
-        return frozenset(self.Unit(eq) for eq in equiv)
+        pass
 
     def _get_compatible_units(
         self, input_units: UnitsContainerT, group_or_system: str | None = None

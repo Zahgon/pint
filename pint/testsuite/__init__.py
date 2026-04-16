@@ -38,18 +38,7 @@ def assert_no_warnings():
 
 def testsuite():
     """A testsuite that has all the pint tests."""
-    suite = unittest.TestLoader().discover(os.path.dirname(__file__))
-    from pint.compat import HAS_NUMPY, HAS_UNCERTAINTIES
-
-    # TESTING THE DOCUMENTATION requires pyyaml, serialize, numpy and uncertainties
-    if HAS_NUMPY and HAS_UNCERTAINTIES:
-        with contextlib.suppress(ImportError):
-            import serialize  # noqa: F401
-            import yaml  # noqa: F401
-
-            add_docs(suite)
-
-    return suite
+    pass
 
 
 def main():
@@ -72,8 +61,7 @@ def run():
     -------
 
     """
-    test_runner = unittest.TextTestRunner()
-    return test_runner.run(testsuite())
+    pass
 
 
 _GLOBS = {
@@ -98,20 +86,7 @@ def add_docs(suite):
     -------
 
     """
-    docpath = os.path.join(os.path.dirname(__file__), "..", "..", "docs")
-    docpath = os.path.abspath(docpath)
-    if pathlib.Path(docpath).exists():
-        checker = PintOutputChecker()
-        for name in (name for name in os.listdir(docpath) if name.endswith(".rst")):
-            file = os.path.join(docpath, name)
-            suite.addTest(
-                doctest.DocFileSuite(
-                    file,
-                    module_relative=False,
-                    checker=checker,
-                    globs=_GLOBS.get(name, None),
-                )
-            )
+    pass
 
 
 def test_docs():

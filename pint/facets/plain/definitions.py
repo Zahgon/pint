@@ -190,9 +190,7 @@ class UnitDefinition(NamedDefinition, errors.WithDefErr):
     @property
     def is_base(self) -> bool:
         """Indicates if it is a base unit."""
-
-        # TODO: This is set in __post_init__
-        return self._is_base
+        pass
 
     @property
     def is_multiplicative(self) -> bool:

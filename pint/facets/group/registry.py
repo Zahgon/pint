@@ -124,14 +124,7 @@ class GenericGroupRegistry(
         self, input_units: UnitsContainer, group: str | None = None
     ) -> frozenset[Unit]:
         """ """
-        if group is None:
-            return super().get_compatible_units(input_units)
-
-        input_units = to_units_container(input_units)
-
-        equiv = self._get_compatible_units(input_units, group)
-
-        return frozenset(self.Unit(eq) for eq in equiv)
+        pass
 
     def _get_compatible_units(
         self, input_units: UnitsContainer, group: str | None = None

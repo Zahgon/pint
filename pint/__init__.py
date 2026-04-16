@@ -67,32 +67,22 @@ def _unpickle(cls, *args):
     object of type cls
 
     """
-    from pint.util import UnitsContainer
-
-    for arg in args:
-        # Prefixed units are defined within the registry
-        # on parsing (which does not happen here).
-        # We need to make sure that this happens before using.
-        if isinstance(arg, UnitsContainer):
-            for name in arg:
-                application_registry.parse_units(name)
-
-    return cls(*args)
+    pass
 
 
 def _unpickle_quantity(cls, *args):
     """Rebuild quantity upon unpickling using the application registry."""
-    return _unpickle(application_registry.Quantity, *args)
+    pass
 
 
 def _unpickle_unit(cls, *args):
     """Rebuild unit upon unpickling using the application registry."""
-    return _unpickle(application_registry.Unit, *args)
+    pass
 
 
 def _unpickle_measurement(cls, *args):
     """Rebuild measurement upon unpickling using the application registry."""
-    return _unpickle(application_registry.Measurement, *args)
+    pass
 
 
 def set_application_registry(registry):

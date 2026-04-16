@@ -84,23 +84,7 @@ class GenericContextRegistry(
         Notice that this method will NOT enable the context;
         see :meth:`enable_contexts`.
         """
-        if isinstance(context, ContextDefinition):
-            context = objects.Context.from_definition(context, self.get_dimensionality)
-
-        if not context.name:
-            raise ValueError("Can't add unnamed context to registry")
-        if context.name in self._contexts:
-            logger.warning(
-                "The name %s was already registered for another context.", context.name
-            )
-        self._contexts[context.name] = context
-        for alias in context.aliases:
-            if alias in self._contexts:
-                logger.warning(
-                    "The name %s was already registered for another context",
-                    context.name,
-                )
-            self._contexts[alias] = context
+        pass
 
     def remove_context(self, name_or_alias: str) -> objects.Context:
         """Remove a context from the registry and return it.
@@ -108,13 +92,7 @@ class GenericContextRegistry(
         Notice that this methods will not disable the context;
         see :meth:`disable_contexts`.
         """
-        context = self._contexts[name_or_alias]
-
-        del self._contexts[context.name]
-        for alias in context.aliases:
-            del self._contexts[alias]
-
-        return context
+        pass
 
     def _build_cache(self, loaded_files=None) -> None:
         super()._build_cache(loaded_files)
@@ -342,23 +320,7 @@ class GenericContextRegistry(
         ...         "This wavelength is equivalent to: %s", wavelength.to("terahertz")
         ...     )
         """
-
-        def decorator(func):
-            assigned = tuple(
-                attr for attr in functools.WRAPPER_ASSIGNMENTS if hasattr(func, attr)
-            )
-            updated = tuple(
-                attr for attr in functools.WRAPPER_UPDATES if hasattr(func, attr)
-            )
-
-            @functools.wraps(func, assigned=assigned, updated=updated)
-            def wrapper(*values, **wrapper_kwargs):
-                with self.context(name, **kwargs):
-                    return func(*values, **wrapper_kwargs)
-
-            return wrapper
-
-        return decorator
+        pass
 
     def _convert(
         self,

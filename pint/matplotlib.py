@@ -52,15 +52,12 @@ class PintConverter(matplotlib.units.ConversionInterface):
     @staticmethod
     def axisinfo(unit, axis):
         """Return axis information for this particular unit."""
-
-        return PintAxisInfo(unit)
+        pass
 
     @staticmethod
     def default_units(x, axis):
         """Get the default unit to use for the given combination of unit and axis."""
-        if iterable(x) and sized(x):
-            return getattr(x[0], "units", None)
-        return getattr(x, "units", None)
+        pass
 
 
 def setup_matplotlib_handlers(registry, enable):
@@ -77,10 +74,4 @@ def setup_matplotlib_handlers(registry, enable):
     -------
 
     """
-    if matplotlib.__version__ < "2.0":
-        raise RuntimeError("Matplotlib >= 2.0 required to work with pint.")
-
-    if enable:
-        matplotlib.units.registry[registry.Quantity] = PintConverter(registry)
-    else:
-        matplotlib.units.registry.pop(registry.Quantity, None)
+    pass

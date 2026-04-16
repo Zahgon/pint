@@ -80,38 +80,7 @@ class NumpyQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
         """Convenience method to wrap on the fly NumPy ndarray methods taking
         care of the units.
         """
-
-        # Set input units if needed
-        if func.__name__ in set_units_ufuncs:
-            self.__ito_if_needed(set_units_ufuncs[func.__name__][0])
-
-        value = func(*args, **kwargs)
-
-        # Set output units as needed
-        if func.__name__ in (
-            matching_input_copy_units_output_ufuncs
-            + copy_units_output_ufuncs
-            + self._wrapped_numpy_methods
-        ):
-            output_unit = self._units
-        elif func.__name__ in set_units_ufuncs:
-            output_unit = set_units_ufuncs[func.__name__][1]
-        elif func.__name__ in matching_input_set_units_output_ufuncs:
-            output_unit = matching_input_set_units_output_ufuncs[func.__name__]
-        elif func.__name__ in op_units_output_ufuncs:
-            output_unit = get_op_output_unit(
-                op_units_output_ufuncs[func.__name__],
-                self.units,
-                list(args) + list(kwargs.values()),
-                self._magnitude.size,
-            )
-        else:
-            output_unit = None
-
-        if output_unit is not None:
-            return self.__class__(value, output_unit)
-
-        return value
+        pass
 
     def __array__(self, t=None) -> np.ndarray:
         if HAS_NUMPY and isinstance(self._magnitude, np.ndarray):
@@ -196,8 +165,7 @@ class NumpyQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
 
         Wraps np.dot().
         """
-
-        return np.dot(self, b)
+        pass
 
     @method_wraps("prod")
     def prod(self, *args, **kwargs):
@@ -205,7 +173,7 @@ class NumpyQuantity(Generic[MagnitudeT], PlainQuantity[MagnitudeT]):
 
         Wraps np.prod().
         """
-        return np.prod(self, *args, **kwargs)
+        pass
 
     def __ito_if_needed(self, to_units):
         if self.unitless and to_units == "radian":

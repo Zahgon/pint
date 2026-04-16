@@ -171,10 +171,7 @@ class UnitRegistry(GenericUnitRegistry[Quantity[facets.MagnitudeT], Unit]):
             whether support should be enabled or disabled (Default value = True)
 
         """
-        # Delays importing matplotlib until it's actually requested
-        from .matplotlib import setup_matplotlib_handlers
-
-        setup_matplotlib_handlers(self, enable)
+        pass
 
     wraps = registry_helpers.wraps
 
@@ -238,15 +235,7 @@ class ApplicationRegistry:
         --------
         set_application_registry
         """
-        if isinstance(new_registry, type(self)):
-            new_registry = new_registry.get()
-
-        if not isinstance(new_registry, (LazyRegistry, UnitRegistry)):
-            raise TypeError("Expected UnitRegistry; got %s" % type(new_registry))
-        logger.debug(
-            "Changing app registry from %r to %r.", self._registry, new_registry
-        )
-        self._registry = new_registry
+        pass
 
     def __getattr__(self, name):
         return getattr(self._registry, name)

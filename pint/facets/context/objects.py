@@ -235,16 +235,7 @@ class Context:
         definition : str
             <unit> = <new definition>``, e.g. ``pound = 0.5 kg``
         """
-        from ...delegates import ParserConfig, txt_defparser
-
-        # TODO: kept for backwards compatibility.
-        #       this is not a good idea as we have no way of known the correct non_int_type
-        cfg = ParserConfig(float)
-        parser = txt_defparser.DefParser(cfg, None)
-        pp = parser.parse_string(definition)
-        for definition in parser.iter_parsed_project(pp):
-            if isinstance(definition, UnitDefinition):
-                self._redefine(definition)
+        pass
 
     def _redefine(self, definition: UnitDefinition):
         self.redefinitions.append(definition)
@@ -320,11 +311,7 @@ class ContextChain(ChainMap[SrcDst, Context]):
     @property
     def graph(self):
         """The graph relating"""
-        if self._graph is None:
-            self._graph = defaultdict(set)
-            for fr_, to_ in self:
-                self._graph[fr_].add(to_)
-        return self._graph
+        pass
 
     # TODO: type registry
     def transform(

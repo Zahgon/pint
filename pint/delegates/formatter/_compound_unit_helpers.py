@@ -141,23 +141,19 @@ def localize_unit_name(
 
 def extract2(element: tuple[str, T, str]) -> tuple[str, T]:
     """Extract display name and exponent from a tuple containing display name, exponent and unit name."""
-
-    return element[:2]
+    pass
 
 
 def to_name_exponent_name(element: tuple[str, T]) -> tuple[str, T, str]:
     """Convert unit name and exponent to unit name as display name, exponent and unit name."""
-
-    # TODO: write a generic typing
-
-    return element + (element[0],)
+    pass
 
 
 def to_symbol_exponent_name(
     el: tuple[str, T], registry: UnitRegistry
 ) -> tuple[str, T, str]:
     """Convert unit name and exponent to unit symbol as display name, exponent and unit name."""
-    return registry._get_symbol(el[0]), el[1], el[0]
+    pass
 
 
 def localize_display_exponent_name(

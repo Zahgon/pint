@@ -114,17 +114,11 @@ class System(SharedRegistryObject):
 
     def remove_groups(self, *group_names: str) -> None:
         """Remove groups from group."""
-        self._used_groups -= set(group_names)
-
-        self.invalidate_members()
+        pass
 
     def format_babel(self, locale: str) -> str:
         """translate the name of the system."""
-        if locale and self.name in _babel_systems:
-            name = _babel_systems[self.name]
-            locale = babel_parse(locale)
-            return locale.measurement_systems[name]
-        return self.name
+        pass
 
     # TODO: When 3.11 is minimal version, use Self
 

@@ -69,7 +69,7 @@ def builtin_format(value: Any, spec: str = "") -> str:
     and this cannot be partialized
     and np requires a callable.
     """
-    return format(value, spec)
+    pass
 
 
 @contextmanager

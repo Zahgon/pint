@@ -532,10 +532,7 @@ class UnitsContainer(Mapping[str, Scalar]):
         UnitsContainer
             A copy of this container.
         """
-        new = self.copy()
-        new._d[newkey] = new._d.pop(oldkey)
-        new._hash = None
-        return new
+        pass
 
     def unit_items(self) -> Iterable[tuple[str, Scalar]]:
         return self._d.items()
@@ -977,16 +974,7 @@ class SharedRegistryObject:
         ValueError
             if other don't use the same unit registry.
         """
-        if self._REGISTRY is getattr(other, "_REGISTRY", None):
-            return True
-
-        elif isinstance(other, SharedRegistryObject):
-            mess = "Cannot operate with {} and {} of different registries."
-            raise ValueError(
-                mess.format(self.__class__.__name__, other.__class__.__name__)
-            )
-        else:
-            return False
+        pass
 
 
 class PrettyIPython:

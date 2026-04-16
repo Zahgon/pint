@@ -105,7 +105,7 @@ def is_duck_array_type(cls: type) -> bool:
 
 def is_duck_array(obj: type) -> bool:
     """Check if an object represents a (non-Quantity) duck array type."""
-    return is_duck_array_type(type(obj))
+    pass
 
 
 def eq(lhs: Any, rhs: Any, check_all: bool) -> bool | Iterable[bool]:

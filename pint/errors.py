@@ -37,12 +37,12 @@ MSG_INVALID_SYSTEM_NAME = (
 
 def is_dim(name: str) -> bool:
     """Return True if the name is flanked by square brackets `[` and `]`."""
-    return name[0] == "[" and name[-1] == "]"
+    pass
 
 
 def is_valid_prefix_name(name: str) -> bool:
     """Return True if the name is a valid python identifier or empty."""
-    return str.isidentifier(name) or name == ""
+    pass
 
 
 is_valid_unit_name = is_valid_system_name = is_valid_context_name = str.isidentifier
@@ -50,7 +50,7 @@ is_valid_unit_name = is_valid_system_name = is_valid_context_name = str.isidenti
 
 def _no_space(name: str) -> bool:
     """Return False if the name contains a space in any position."""
-    return name.strip() == name and " " not in name
+    pass
 
 
 is_valid_group_name = _no_space
@@ -66,11 +66,7 @@ def is_valid_dimension_name(name: str) -> bool:
     - flanked by square brackets.
     - empty dimension name or identifier.
     """
-
-    # TODO: shall we check also fro spaces?
-    return name == "[]" or (
-        len(name) > 1 and is_dim(name) and str.isidentifier(name[1:-1])
-    )
+    pass
 
 
 class WithDefErr:

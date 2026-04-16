@@ -41,11 +41,7 @@ def _replace_units(original_units, values_by_name):
     -------
 
     """
-    q = 1
-    for arg_name, exponent in original_units.items():
-        q = q * values_by_name[arg_name] ** exponent
-
-    return getattr(q, "_units", UnitsContainer({}))
+    pass
 
 
 def _to_units_container(a, registry=None):
@@ -66,9 +62,7 @@ def _to_units_container(a, registry=None):
 
 
     """
-    if isinstance(a, str) and "=" in a:
-        return to_units_container(a.split("=", 1)[1]), True
-    return to_units_container(a, registry), False
+    pass
 
 
 def _parse_wrap_args(args, registry=None):
@@ -184,15 +178,7 @@ def _apply_defaults(sig, args, kwargs):
     Named keywords may have been left blank. This function applies the default
     values so that every argument is defined.
     """
-
-    for i, param in enumerate(sig.parameters.values()):
-        if (
-            i >= len(args)
-            and param.default != Parameter.empty
-            and param.name not in kwargs
-        ):
-            kwargs[param.name] = param.default
-    return list(args), kwargs
+    pass
 
 
 def wraps(
@@ -234,84 +220,7 @@ def wraps(
         if any of the provided arguments is not a unit a string or Quantity
 
     """
-
-    if not isinstance(args, (list, tuple)):
-        args = (args,)
-
-    for arg in args:
-        if arg is not None and not isinstance(arg, (ureg.Unit, str)):
-            raise TypeError(
-                "wraps arguments must by of type str or Unit, not %s (%s)"
-                % (type(arg), arg)
-            )
-
-    converter = _parse_wrap_args(args)
-
-    is_ret_container = isinstance(ret, (list, tuple))
-    if is_ret_container:
-        for arg in ret:
-            if arg is not None and not isinstance(arg, (ureg.Unit, str)):
-                raise TypeError(
-                    "wraps 'ret' argument must by of type str or Unit, not %s (%s)"
-                    % (type(arg), arg)
-                )
-        ret = ret.__class__([_to_units_container(arg, ureg) for arg in ret])
-    else:
-        if ret is not None and not isinstance(ret, (ureg.Unit, str)):
-            raise TypeError(
-                "wraps 'ret' argument must by of type str or Unit, not %s (%s)"
-                % (type(ret), ret)
-            )
-        ret = _to_units_container(ret, ureg)
-
-    def decorator(func: Callable[..., Any]) -> Callable[..., Quantity]:
-        sig = signature(func)
-        count_params = len(sig.parameters)
-        if len(args) != count_params:
-            raise TypeError(
-                "%s takes %i parameters, but %i units were passed"
-                % (func.__name__, count_params, len(args))
-            )
-
-        assigned = tuple(
-            attr for attr in functools.WRAPPER_ASSIGNMENTS if hasattr(func, attr)
-        )
-        updated = tuple(
-            attr for attr in functools.WRAPPER_UPDATES if hasattr(func, attr)
-        )
-
-        @functools.wraps(func, assigned=assigned, updated=updated)
-        def wrapper(*values, **kw) -> Quantity:
-            values, kw = _apply_defaults(sig, values, kw)
-
-            # In principle, the values are used as is
-            # When then extract the magnitudes when needed.
-            new_values, new_kw, values_by_name = converter(
-                ureg, sig, values, kw, strict
-            )
-
-            result = func(*new_values, **new_kw)
-
-            if is_ret_container:
-                out_units = (
-                    _replace_units(r, values_by_name) if is_ref else r
-                    for (r, is_ref) in ret
-                )
-                return ret.__class__(
-                    res if unit is None else ureg.Quantity(res, unit)
-                    for unit, res in zip_longest(out_units, result)
-                )
-
-            if ret[0] is None:
-                return result
-
-            return ureg.Quantity(
-                result, _replace_units(ret[0], values_by_name) if ret[1] else ret[0]
-            )
-
-        return wrapper
-
-    return decorator
+    pass
 
 
 def check(
@@ -344,43 +253,4 @@ def check(
     ValueError
         If the any of the provided dimensions cannot be parsed as a dimension.
     """
-    dimensions = [
-        ureg.get_dimensionality(dim) if dim is not None else None for dim in args
-    ]
-
-    def decorator(func):
-        sig = signature(func)
-        count_params = len(sig.parameters)
-        if len(dimensions) != count_params:
-            raise TypeError(
-                "%s takes %i parameters, but %i dimensions were passed"
-                % (func.__name__, count_params, len(dimensions))
-            )
-
-        assigned = tuple(
-            attr for attr in functools.WRAPPER_ASSIGNMENTS if hasattr(func, attr)
-        )
-        updated = tuple(
-            attr for attr in functools.WRAPPER_UPDATES if hasattr(func, attr)
-        )
-
-        @functools.wraps(func, assigned=assigned, updated=updated)
-        def wrapper(*args, **kwargs):
-            list_args, kw = _apply_defaults(sig, args, kwargs)
-
-            for i, param_name in enumerate(sig.parameters):
-                if i >= len(args):
-                    list_args.append(kw[param_name])
-
-            for dim, value in zip(dimensions, list_args):
-                if dim is None:
-                    continue
-
-                if not ureg.Quantity(value).check(dim):
-                    val_dim = ureg.get_dimensionality(value)
-                    raise DimensionalityError(value, "a quantity of", val_dim, dim)
-            return func(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
+    pass

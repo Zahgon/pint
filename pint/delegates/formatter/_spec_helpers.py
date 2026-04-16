@@ -40,21 +40,7 @@ def parse_spec(spec: str) -> str:
     - what happens if two distinct values are found?
 
     """
-
-    result = ""
-    for ch in reversed(spec):
-        if ch == "~" or ch in _BASIC_TYPES:
-            continue
-        elif ch in list(REGISTERED_FORMATTERS.keys()) + ["~"]:
-            if result:
-                raise ValueError("expected ':' after format specifier")
-            else:
-                result = ch
-        elif ch.isalpha():
-            raise ValueError("Unknown conversion specified " + ch)
-        else:
-            break
-    return result
+    pass
 
 
 def extract_custom_flags(spec: str) -> str:

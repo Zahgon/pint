@@ -434,8 +434,7 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
         loc : str or None
             None` (do not translate), 'sys' (detect the system locale) or a locale id string.
         """
-
-        self.formatter.set_locale(loc)
+        pass
 
     @property
     @deprecated(
@@ -444,7 +443,7 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
     )
     def default_format(self) -> str:
         """Default formatting string for quantities."""
-        return self.formatter.default_format
+        pass
 
     @default_format.setter
     @deprecated(
@@ -511,21 +510,7 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
         """Helper function to store a definition in the internal dictionaries.
         It stores the definition under its name, symbol and aliases.
         """
-        self._helper_single_adder(
-            definition.name, definition, target_dict, casei_target_dict
-        )
-
-        # TODO: Not sure why but using hasattr does not work here.
-        if getattr(definition, "has_symbol", ""):
-            self._helper_single_adder(
-                definition.symbol, definition, target_dict, casei_target_dict
-            )
-
-        for alias in getattr(definition, "aliases", ()):
-            if " " in alias:
-                logger.warn("Alias cannot contain a space: " + alias)
-
-            self._helper_single_adder(alias, definition, target_dict, casei_target_dict)
+        pass
 
     def _helper_single_adder(
         self,
@@ -538,15 +523,7 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
 
         It warns or raise error on redefinition.
         """
-        if key in target_dict:
-            if self._on_redefinition == "raise":
-                raise RedefinitionError(key, type(value))
-            elif self._on_redefinition == "warn":
-                logger.warning(f"Redefining '{key}' ({type(value)})")
-
-        target_dict[key] = value
-        if casei_target_dict is not None:
-            casei_target_dict[key.lower()].add(key)
+        pass
 
     def _add_defaults(self, defaults_definition: DefaultsDefinition) -> None:
         for k, v in defaults_definition.items():
@@ -787,21 +764,7 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
             exponential proportionality or None if the units cannot be converted
 
         """
-        # shortcut in case of equal units
-        if unit1 == unit2:
-            return 1
-
-        dim1, dim2 = (self.get_dimensionality(unit) for unit in (unit1, unit2))
-        if dim1 == dim2:
-            return 1
-        elif not dim1 or not dim2 or dim1.keys() != dim2.keys():  # not comparable
-            return None
-
-        ratios = (dim2[key] / val for key, val in dim1.items())
-        first = next(ratios)
-        if all(r == first for r in ratios):  # all are same, we're good
-            return first
-        return None
+        pass
 
     def get_root_units(
         self, input_units: UnitLike, check_nonmult: bool = True
@@ -991,8 +954,7 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
             multiplicative factor, plain units
 
         """
-
-        return self.get_root_units(input_units, check_nonmult)
+        pass
 
     # TODO: accumulators breaks typing list[int, dict[str, int]]
     # So we have changed the behavior here
@@ -1038,21 +1000,13 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
 
     def get_compatible_units(self, input_units: QuantityOrUnitLike) -> frozenset[UnitT]:
         """ """
-        input_units = to_units_container(input_units)
-
-        equiv = self._get_compatible_units(input_units)
-
-        return frozenset(self.Unit(eq) for eq in equiv)
+        pass
 
     def _get_compatible_units(
         self, input_units: UnitsContainer, *args, **kwargs
     ) -> frozenset[str]:
         """ """
-        if not input_units:
-            return frozenset()
-
-        src_dim = self._get_dimensionality(input_units)
-        return self._cache.dimensional_equivalents.setdefault(src_dim, frozenset())
+        pass
 
     # TODO: remove context from here
     def is_compatible_with(
@@ -1416,34 +1370,7 @@ class GenericPlainRegistry(Generic[QuantityT, UnitT], metaclass=RegistryMeta):
              Match many results
              (Default value = False)
         """
-
-        if not input_string:
-            return [] if many else None
-
-        # Parse string
-        regex = pattern_to_regex(pattern)
-        matched = re.finditer(regex, input_string)
-
-        # Extract result(s)
-        results = []
-        for match in matched:
-            # Extract units from result
-            match = match.groupdict()
-
-            # Parse units
-            units = [
-                float(value) * self.parse_expression(unit, case_sensitive)
-                for unit, value in match.items()
-            ]
-
-            # Add to results
-            results.append(units)
-
-            # Return first match only
-            if not many:
-                return results[0]
-
-        return results
+        pass
 
     def parse_expression(
         self: Self,

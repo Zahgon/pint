@@ -61,10 +61,7 @@ class ParserConfig:
         _NotNumeric
             If the string cannot be parsed as a number.
         """
-        val = self.to_scaled_units_container(s)
-        if len(val):
-            raise NotNumeric(s)
-        return val.scale
+        pass
 
 
 @dataclass(frozen=True)
